@@ -1,4 +1,4 @@
-# Board class has the positions and checks when game is won
+#Board class has the positions and checks when game is won
 class Board
   attr_reader :current_turn
 
@@ -21,11 +21,13 @@ class Board
   end
 
   def reset_board
-    @positions = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+      puts 'Reseting board...'
+      sleep 5
+      puts "\n \n"
+     @positions = [1, 2, 3, 4, 5, 6, 7, 8, 9]
   end
 
   def add_piece(position)
-    position -= 1
     location_value = @positions[position]
     if location_value != 'x' && location_value != 'o'
       @positions[position] = @current_turn
@@ -33,7 +35,15 @@ class Board
       puts "Can't move here!"
     end
     game_won?(current_turn)
+    board_full?()
     change_turns
+  end
+
+  def board_full?
+     return unless @positions.all? {|element| element == 'x' or element =='o'}
+    puts "Board full!"
+    reset_board()
+    display_board
   end
 
   def display_board
@@ -49,17 +59,15 @@ class Board
     won = LINES.any? { |row| row.all? { |index| @positions[index] == mark } }
     if won
       puts "#{mark} won the game!"
-      puts 'Reseting board...'
-      sleep 5
-      puts "\n \n"
-      reset_board
-      display_board
+      reset_board()
+      display_board()
     end
   end
 end
 
 # Opponent AI
-class AI
+ 
+class AI  
   # AI will probably only use 'o'
   # create method to choose a move at random
   # create a method/method for defense moves
@@ -73,9 +81,11 @@ board = Board.new
 loop do
   puts "It's #{board.current_turn}'s move"
   puts 'Where to move:'
-  position = gets.to_i
-  if position > 9 || position < 1
-    break
+  position = gets.chomp.to_i
+  puts position.class
+  position -= 1
+  if position > 8 || position < 0
+    puts 'Input must be in range 1-9'
   else
     board.add_piece(position)
   end
